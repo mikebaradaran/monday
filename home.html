@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tiks</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        .emoji:hover {
+            border: 1px solid red;
+        }
+
+        .emoji {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    Name:<input type="text" id="name" /><br />
+    <input type="text" id="message" /><button onclick="sendMessage()">
+        Send
+    </button>
+    <div id="trainer">
+        <div id="emojis"></div>
+    </div>
+
+    <div id="messages"></div>
+    <script>
+      const txtName = document.getElementById("name");
+      const txtMessage = document.getElementById("message");
+      const divMessages = document.getElementById("messages");
+      const divTrainer = document.getElementById("trainer");
+
+      txtMessage.addEventListener("keyup", (event) => {
+        if (event.keyCode === 13) {
+          sendMessage();
+        }
+      });
+
+      function displayData(data) {
+        let messages = "<table>";
+
+        data.forEach((d) => {
+          messages += `<tr><td>${d.name}</td><td>${d.body}</td></tr>`;
+        });
+
+        divMessages.innerHTML = messages + "</table>";
+      }
+      //-------------------------------------------------------------
+      const socket = io("https://ticksncrosses.glitch.me");
+      socket.on("connection");
+
+      socket.on("message", (data) => {
+        if (txtName.value.toLowerCase() == "trainer") {
+          displayData(data);
+          divTrainer.style.display = "none";
+        }
+      });
+
+      const sendMessage = () => {
+        let msg = {
+          name: txtName.value,
+          body: txtMessage.value,
+        };
+        socket.emit("message", msg);
+        txtMessage.value = "";
+        txtMessage.focus();
+      };
+
+      // ---------- Emojis ---------------------------------
+      function emojiClick(e) {
+        txtMessage.value += e.innerHTML;
+        txtMessage.focus();
+      }
+
+      let emojis = [
+        "👍",
+        "😊",
+        "🍕",
+        "🍵",
+        "📑",
+        "✅",
+        "❌",
+        "🍔",
+        "😕",
+        "🎉",
+        "❤️",
+        "🅰",
+        "🅱",
+        "🆗",
+        "1️",
+        "2️",
+        "3️",
+        "4️",
+        "5️",
+      ];
+      var res = "";
+      emojis.forEach((e, i) => {
+        res += `<span class='emoji' onClick="emojiClick(this)">${e}</span>`;
+        if(i ==7 || i == 13 ) res += "<br />";
+      });
+      document.getElementById("emojis").innerHTML = res;
+    </script>
+</body>
+</html>

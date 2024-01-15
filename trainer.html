@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tiks Trainer</title>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <style>
+        table,
+        td,
+        th {
+            border: 1px solid;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-size: large;
+        }
+
+        td:first-child {
+            padding-right: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="messages"></div>
+    <button onclick="sendMessage('clear')">❌</button>
+    <button onclick="sendMessage('delete')">🏁</button>
+    <button onclick="navigator.clipboard.writeText('https://ticksncrosses.glitch.me/home');">
+        ©️
+    </button>
+
+    <script>
+      const divMessages = document.getElementById("messages");
+
+      function sendMessage(command) {
+        let msg = {
+          name: "trainer",
+          body: command,
+        };
+        socket.emit("message", msg);
+      }
+
+      function displayData(data) {
+        let messages = "<table>";
+
+        data.forEach((d) => {
+          messages += `<tr><td>${d.name}</td><td>${d.body}</td></tr>`;
+        });
+
+        divMessages.innerHTML = messages + "</table>";
+      }
+      //-------------------------------------------------------------
+      const socket = io("https://ticksncrosses.glitch.me");
+      socket.on("connection");
+
+      socket.on("message", (data) => {
+        displayData(data);
+      });
+    </script>
+</body>
+</html>
